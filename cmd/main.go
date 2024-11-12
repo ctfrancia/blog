@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/yuin/goldmark"
+	highlighting "github.com/yuin/goldmark-highlighting/v2"
 	"io"
 	"log"
 	"net/http"
@@ -43,6 +46,14 @@ func (fr FileReader) Read(slug string) (string, error) {
 }
 
 func PostHandler(sl SlugReader) http.HandlerFunc {
+	mdRenderer := goldmark.New(
+		goldmark.WithExtensions(
+			highlighting.NewHighlighting(
+				highlighting.WithStyle("dracula"),
+			),
+		),
+	)
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		slug := r.PathValue("slug")
 		file := fmt.Sprintf("internal/posts/%s.md", slug)
@@ -53,6 +64,13 @@ func PostHandler(sl SlugReader) http.HandlerFunc {
 			http.Error(w, "Post not found", http.StatusNotFound)
 			return
 		}
-		fmt.Fprintf(w, "Post slug: %s", content)
+
+		var buf bytes.Buffer
+		err = mdRenderer.Convert([]byte(content), &buf)
+		if err != nil {
+			panic(err)
+		}
+		io.Copy(w, &buf)
+		fmt.Fprint(w, buf.String())
 	}
 }
