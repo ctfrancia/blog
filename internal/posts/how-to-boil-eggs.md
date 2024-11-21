@@ -1,7 +1,7 @@
 +++
 title = "How to Boil Eggs"
 description = "A simple guide on how to boil eggs perfectly every time."
-date = "2024-11-14"
+date = 2024-11-14
 
 [author]
   name = "Christian Francia"

@@ -1,7 +1,7 @@
 +++
 title = "Go's io.Reader"
 description = "The `io.Reader` interface in Go"
-date = "2024-11-14"
+date = 2024-11-14
 
 [author]
   name = "Christian Francia"
